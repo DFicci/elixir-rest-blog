@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @CrossOrigin
 @RestController
 @RequestMapping(value = "/api/posts", headers = "Accept=application/json")
@@ -20,25 +21,25 @@ public class PostController {
     }
 
     @GetMapping("{postID}")
-    public Post getById(@PathVariable Long postID){
+    public Post getById(@PathVariable Long postID) {
         Post post = new Post(postID, "Post" + postID, "blah blah blah");
         return post;
     }
 
-   @PostMapping
-    private void createPost(@RequestBody Post newPost){
+    @PostMapping
+    private void createPost(@RequestBody Post newPost) {
         System.out.println("Ready to add post." + newPost);
-   }
+    }
 
-   @PutMapping("{id}")
-    private void updatePost(@PathVariable Long id, @RequestBody Post newPost){
-       System.out.println("Ready to update post." + id + newPost);
-   }
+    @PutMapping("{id}")
+    private void updatePost(@PathVariable Long id, @RequestBody Post newPost) {
+        System.out.println("Ready to update post." + id + newPost);
+    }
 
-   @DeleteMapping("{postId}")
-    private void deletePost(@PathVariable Long postId){
-       System.out.println("ready to add post." + postId);
-   }
+    @DeleteMapping("{postId}")
+    private void deletePost(@PathVariable Long postId) {
+        System.out.println("ready to delete post." + postId);
+    }
 
 
 }

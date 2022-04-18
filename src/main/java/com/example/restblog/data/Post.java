@@ -1,14 +1,6 @@
 package com.example.restblog.data;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.*;
-
-
-
-
-
 
 @Getter
 @Setter
@@ -18,8 +10,8 @@ import lombok.*;
 public class Post {
 
 
-    @JsonIgnore
-    private long id;
+
+    private Long id;
     private String title;
     private String content;
 
