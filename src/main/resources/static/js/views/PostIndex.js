@@ -39,7 +39,9 @@ export function PostsEvent() {
 }
 
 function createAddPostListener() {
+
     console.log("adding add post listener");
+
     $("#add-post-button").click(function () {
         const title = $("#add-post-title").val();
         const content = $("#add-post-content").val();
@@ -47,6 +49,7 @@ function createAddPostListener() {
             title,
             content
         }
+
         console.log("Ready to add " + newPost);
 
         const request = {
@@ -71,6 +74,7 @@ function createEditPostListener() {
       const id = $(this).data(`id`);
       const currentTitle = $(`#title-${id}`).html();
       const currentContent = $(`#content-${id}`).text();
+
       $("#add-post-id").val(id);
       $("#add-post-title").val(currentTitle);
       $("#add-post-content").val(currentContent);
