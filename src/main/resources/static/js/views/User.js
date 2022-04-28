@@ -34,7 +34,7 @@ export function UserEvent() {
         const id = $(this).data("id");
         const newPassword = $("#update-password-input").val()
 
-        console.log(newPassword);
+
 
         let request = {
             method: "PUT",
@@ -44,7 +44,7 @@ export function UserEvent() {
 
         fetch(`http://localhost:8081/api/users/${id}/updatePassword?newPassword=${newPassword}`, request)
             .then(response => {
-                console.log(response.status)
+
                 CreateView("/user")
             });
 

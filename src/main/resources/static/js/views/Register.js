@@ -1,35 +1,53 @@
 import CreateView from "../createView.js"
+import {getHeaders} from "../auth.js";
 
 export default function Register(props) {
+    // language=HTML
     return `
-    <!DOCTYPE html>
+        <!DOCTYPE html>
         <html>
-            <head>
-                <meta charset="UTF-8"/>
-                <title>Register</title>
-            </head>
-            <body>
-                <h1>Register</h1>
-        
-                <form id="register-form">
-                    <label for="username">Username</label>
-                    <input id="username" name="username" type="text"/>
-                    <label for="email">Email</label>
-                    <input id="email" name="email" type="email">
-                    <label for="password">Password</label>
-                    <input id="password" name="password" type="password"/>
-                    <button id="register-btn" type="button">Register</button>
-                </form>
-            </body>
+        <head>
+            <meta charset="UTF-8"/>
+            <title>Register</title>
+        </head>
+        <body>
+        <h1>Register</h1>
+
+        <!--        <form id="register-form">-->
+        <!--            <label for="username">Username</label>-->
+        <!--            <input id="username" name="username" type="text"/>-->
+        <!--            <label for="email">Email</label>-->
+        <!--            <input id="email" name="email" type="email">-->
+        <!--            <label for="password">Password</label>-->
+        <!--            <input id="password" name="password" type="password"/>-->
+        <!--            <button id="register-btn" type="button">Register</button>-->
+        <!--        </form>-->
+        <form>
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" aria-describedby="emailHelp"
+                       placeholder="Enter email">
+                <small id="emailHelp" class="form-text">We'll never share your email with anyone
+                    else.</small>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            
+            <button type="submit" class="btn btn-primary mt-3 " id="register-btn">Submit</button>
+            <hr>
+        </form>
+        </body>
         </html>
-`;
+    `;
 }
 
-export function RegisterEvent(){
-    $("#register-btn").click(function(){
+export function RegisterEvent() {
+    $("#register-btn").click(function () {
 
         let newUser = {
-            username: $("#username").val(),
+            username: $("#email").val(),
             email: $("#email").val(),
             password: $("#password").val()
         }
@@ -38,15 +56,23 @@ export function RegisterEvent(){
 
         let request = {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
+            headers: getHeaders(),
             body: JSON.stringify(newUser)
         }
 
         fetch("http://localhost:8081/api/users", request)
             .then(response => {
-                console.log(response.status);
-                CreateView("/");
+                if (response.status === 500){
+                    ifAccountAlreadyCreated();
+                    return;
+                }
+                CreateView("/login");
             })
 
     })
+}
+
+function ifAccountAlreadyCreated(){
+    $("#email").css("border", "1px solid red");
+    $("#emailHelp").html("Sorry, that email is already associated with another account.").css("color", "red");
 }

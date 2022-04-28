@@ -2,6 +2,8 @@ package com.example.restblog.web;
 
 import com.example.restblog.data.User;
 import com.example.restblog.data.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -14,31 +16,37 @@ import java.util.*;
 @RequestMapping(value = "/api/users", headers = "Accept=application/json")
 public class UsersController {
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
-    public UsersController(UserRepository userRepository) {
+    public UsersController(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    @GetMapping("me")
+    private User getMyInfo(OAuth2Authentication auth){
+        String userName = auth.getName();
+        return userRepository.findByEmail(userName);
+    }
     @GetMapping
     private List<User> getUser() {
-        List<User> users = new ArrayList<>();
-
-        return users;
+        return userRepository.findAll();
     }
 
     @GetMapping("{userID}")
     public Optional<User> getUserById(@PathVariable Long userID) {
+
         return userRepository.findById(userID);
     }
 
     @GetMapping("/getByUsername")
-    public void getByUsername(@RequestParam String username) {
-        System.out.println("The Username is " + username);
+    public User getByUsername(@RequestParam String username) {
+        return userRepository.findByUsername(username);
     }
 
     @GetMapping("/getByEmail")
-    public void getByEmail(@RequestParam String email) {
-        System.out.println("users email is : " + email);
+    public User getByEmail(@RequestParam String email) {
+        return userRepository.findByUsername(email);
     }
 
     @PostMapping
@@ -46,6 +54,7 @@ public class UsersController {
         User user = newUser;
         user.setCreatedAt(LocalDate.now());
         user.setRole(User.Role.USER);
+        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
         userRepository.save(user);
         System.out.println("Ready to add user." + newUser);
     }
@@ -57,12 +66,7 @@ public class UsersController {
 
     @PutMapping("{id}/updatePassword")
     private void updatePassword(@PathVariable Long id, @RequestParam(required = false) String oldPassword, @Valid @Size(min = 3) @RequestParam String newPassword) {
-//        User user = new User(id, "user 1", "email 1", "1111", null, User.Role.ADMIN,null);
-//        if (oldPassword != null && oldPassword.equals(user.getPassword())){
-//            user.setPassword(newPassword);
-//            System.out.println("successfully created new password.");
-//        }
-//        System.out.println(user.getPassword());
+
         System.out.println("changing password to " + newPassword);
     }
 

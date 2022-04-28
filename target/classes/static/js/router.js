@@ -10,6 +10,8 @@ import {RegisterEvent} from "./views/Register.js";
 import {PostsEvent} from "./views/PostIndex.js";
 import {UserEvent} from "./views/User.js";
 import User from "./views/User.js";
+import logOut from "./views/logOut.js";
+import {LogOutEvent} from "./views/logOut.js";
 /**
  * Returns the route object for a specific route based on the given URI
  * @param URI
@@ -67,11 +69,18 @@ export default function router(URI) {
         '/user': {
             returnView: User,
             state: {
-                user: "/api/users/1"
+                user: "/api/users/me"
             },
             uri: '/user',
             title: 'User',
             viewEvent: UserEvent
+        },
+        '/logout': {
+            returnView: logOut,
+            state: {},
+            uri: location.pathname,
+            title: 'Log Out',
+            viewEvent: LogOutEvent
         }
     };
 

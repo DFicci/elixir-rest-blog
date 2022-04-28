@@ -1,34 +1,60 @@
 import createView from "../createView.js";
+import {getHeaders} from "../auth.js";
+
+
+const BASE_URI = 'http://localhost:8081/api/posts';
 
 export default function PostIndex(props) {
+    // language=HTML
     return `
-    <header>
-        <h1>Posts Page</h1>
-    </header>
-       <main>
-          <div>
-             ${props.posts.map(post =>  {
-                    return` 
-                <div>
-                    <h1 id="title-${post.id}">${post.title}</h1> 
-                    <h3 id="content-${post.id}">${post.content}</h3> 
-                    <a href="#" class="edit-post-button" type="button" id="edit-post-${post.id}" data-id="${post.id}">edit</a>   
-                    <a href="#" class="delete-post-button" type="button" id="delete-post-${post.id}" data-id="${post.id}">delete</a>
+        <header>
+            <h1>Posts Page</h1>
+        </header>
+        <main>
+            
+            <h3>Feed</h3>
+            <div id="posts-container">
+                ${props.posts.map(post => {
+        return `
+<div class="card">
+    <h4 class="card-header">
+        <span id="title-${post.id}">${post.title}</span>
+        <span style="float:right" id="author-${post.id}">Author: ${post.author.username}</span>
+    </h4>
+    <div class="card-body">
+        <p id="content-${post.id}" class="card-text">${post.content}</p>
+    </div>
+    <div class="card-footer text-muted">            
+        ${post.categories.map(category => {
+            return `<span class="border border-primary rounded">${category.name}</span>`
+        }).join('')}
+        <span><a href="#" class="edit-post-button" data-id="${post.id}">Edit</a></span>
+        <span><a href="#" class="delete-post-button" data-id="${post.id}">Delete</a></span>
+    </div>
+</div>`;
+    }).join('')}
+            </div>
+            <hr>
+            <h3>Add a Post</h3>
+            <form id="add-post-form">
+                <div class="mb-3">
+                    <input disabled type="text" class="form-control" id="add-post-id" value="0">
                 </div>
-             `}).join('')}
-          </div>
-          <hr>
-            <div>
-              <form>
-                <input disabled  type="text" id="add-post-id" value="0">
-                <label>Title</label>
-                <input id="add-post-title"> 
-                <label>Content</label>
-                <input id="add-post-content">
-                <button type="button" id="add-post-button">Submit</button>
-              </form>
-          </div>
-       </main>
+                <div class="mb-3">
+                    <label for="add-post-title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="add-post-title" placeholder="Post title">
+                </div>
+                <label for="add-post-content" class="form-label">Content</label>
+                <textarea class="form-control" id="add-post-content" rows="3" placeholder="Post content"></textarea>
+                </div>
+                <br>
+                <button id="clear-post-button" type="submit" class="btn btn-primary mb-3"
+                        onclick="document.querySelector('#add-post-id').value = 0; document.querySelector('#add-post-title').value = ''; document.querySelector('#add-post-content').value = '';">
+                    Clear
+                </button>
+                <button id="add-post-button" type="submit" class="btn btn-primary mb-3">Submit</button>
+            </form>
+        </main>
     `;
 }
 
@@ -40,12 +66,12 @@ export function PostsEvent() {
 
 function createAddPostListener() {
 
-    console.log("adding add post listener");
-
     $("#add-post-button").click(function () {
+        const id = $("#add-post-id").val();
         const title = $("#add-post-title").val();
         const content = $("#add-post-content").val();
         const newPost = {
+            id,
             title,
             content
         }
@@ -54,7 +80,7 @@ function createAddPostListener() {
 
         const request = {
             method: "POST",
-            headers: {'Content-Type': 'application/json'},
+            headers: getHeaders(),
             body: JSON.stringify(newPost)
         }
 
@@ -88,9 +114,7 @@ function createDeletePostListeners(){
 
         const request = {
             method: "DELETE",
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getHeaders(),
         }
 
         fetch(`http://localhost:8081/api/posts/${id}`, request)
